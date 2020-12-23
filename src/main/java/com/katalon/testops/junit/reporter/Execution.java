@@ -11,14 +11,14 @@ public class Execution {
     private long end;
     private String uuid;
     private Failure failure;
-    private Execution testsuite;
+    private Execution parent;
 
     public Execution(Description description, Execution testsuite) {
         this.description = description;
         this.start = System.currentTimeMillis();
         this.end = -1;
         this.status = Status.INCOMPLETE;
-        this.testsuite = testsuite;
+        this.parent = testsuite;
     }
 
     public Execution(Description description, String uuid) {
@@ -37,12 +37,12 @@ public class Execution {
         return description.getTestClass().getName();
     }
 
-    public void setTestsuite(Execution testsuite) {
-        this.testsuite = testsuite;
+    public void setParent(Execution parent) {
+        this.parent = parent;
     }
 
-    public Execution getTestsuite() {
-        return this.testsuite;
+    public Execution getParent() {
+        return this.parent;
     }
 
     public void setFailure(Failure failure) {
@@ -53,7 +53,7 @@ public class Execution {
         return this.failure;
     }
 
-    public String getTestSuiteUUID() {
+    public String getUuid() {
         if (!isTestSuite()) {
             throw new UnsupportedOperationException("Not a TestSuite step");
         }

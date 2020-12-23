@@ -10,36 +10,21 @@ import org.junit.runner.Description;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
 
-import java.util.Optional;
-import java.util.Stack;
+import java.util.HashMap;
+import java.util.Map;
 
 public class TestRunManager {
 
-    Stack<Execution> running;
+    private static final String NULL = "null";
+
     ReportLifecycle reportLifecycle;
+    Map<String, Execution> testSuites;
+    Map<Description, Execution> testCases;
 
     public TestRunManager() {
-        running = new Stack<>();
         reportLifecycle = new ReportLifecycle();
-    }
-
-    public Execution endStep(Description description) {
-        if (running.peek().getDescription() == description) {
-            return running.pop();
-        }
-        return null;
-    }
-
-    public Execution getTestStep(Description description) {
-        if (running.empty()) {
-            return null;
-        }
-        Execution latest = running.peek();
-        if (latest.getDescription() == description && latest.isTestSuite()) {
-            return  running.peek();
-        }
-        Optional<Execution> rel = running.stream().filter(s -> s.getDescription() == description && s.isTestSuite()).findFirst();
-        return rel.isPresent() ? rel.get() : null;
+        testSuites = new HashMap<>();
+        testCases = new HashMap<>();
     }
 
     public void testRunStarted(Description description) throws Exception {
@@ -50,77 +35,84 @@ public class TestRunManager {
 
     public void testRunFinished(Result result) throws Exception {
         System.out.println("testRunFinished");
-        running.clear();
         reportLifecycle.stopExecution();
         reportLifecycle.writeTestResultsReport();
         reportLifecycle.writeTestSuitesReport();
         reportLifecycle.writeExecutionReport();
 //        reportLifecycle.upload();
+        testSuites.clear();
+        testCases.clear();
     }
 
     public void testSuiteStarted(Description description) throws Exception {
-        System.out.println("testSuiteStarted: " + description.getDisplayName());
+        if (NULL.equals(description.getClassName())) {
+            return;
+        }
+        System.out.println("testSuiteStarted: " + description.getClassName());
         String uuid = GeneratorHelper.generateUniqueValue();
-        running.push(new Execution(description, uuid));
+        testSuites.put(description.getClassName(), new Execution(description, uuid));
         TestSuite testSuite = new TestSuite();
-        testSuite.setName(description.getDisplayName());
+        testSuite.setName(description.getClassName());
         reportLifecycle.startSuite(testSuite, uuid);
     }
 
     public void testSuiteFinished(Description description) throws Exception {
-        System.out.println("testSuiteFinished: " + description.getDisplayName());
-        Execution step = getTestStep(description);
+        if (NULL.equals(description.getClassName())) {
+            return;
+        }
+        System.out.println("testSuiteFinished: " + description.getClassName());
+        Execution execution = testSuites.get(description.getClassName());
         String uuid = null;
-        if (step != null) {
-            step.setEnd(System.currentTimeMillis());
-            uuid = step.getTestSuiteUUID();
+        if (execution != null) {
+            execution.setEnd(System.currentTimeMillis());
+            uuid = execution.getUuid();
         }
         if (uuid == null) {
             uuid = GeneratorHelper.generateUniqueValue();
         }
-        endStep(description);
+        testSuites.remove(description.getClassName());
         reportLifecycle.stopTestSuite(uuid);
     }
 
     public void testStarted(Description description) throws Exception {
         System.out.println("testStarted: " + description.getMethodName());
-        running.push(new Execution(description, running.peek()));
+        testCases.put(description, new Execution(description, testSuites.get(description.getTestClass().getName())));
     }
 
     public void testFinished(Description description) throws Exception {
-        Execution step = getTestStep(description);
-        endStep(description);
-        if (step == null) {
+        Execution execution = testCases.get(description);
+        testCases.remove(description);
+        if (execution == null) {
             return;
         }
-        step.setEnd(System.currentTimeMillis());
-        Status status = step.getFailure() != null ? Status.PASSED : Status.FAILED;
-        step.setStatus(status);
-        TestResult testResult = ReportHelper.createTestResult(step);
+        execution.setEnd(System.currentTimeMillis());
+        Status status = execution.getStatus() == Status.INCOMPLETE ? Status.PASSED : Status.FAILED;
+        execution.setStatus(status);
+        TestResult testResult = ReportHelper.createTestResult(execution);
         reportLifecycle.stopTestCase(testResult);
     }
 
     public void testFailure(Failure failure) throws Exception {
-        Execution step = getTestStep(failure.getDescription());
-        if (step == null) {
+        Execution execution = testCases.get(failure.getDescription());
+        if (execution == null) {
             return;
         }
-        step.setFailure(failure);
-        step.setStatus(Status.FAILED);
+        execution.setFailure(failure);
+        execution.setStatus(Status.FAILED);
     }
 
     public void testAssumptionFailure(Failure failure) {
-        Execution step = getTestStep(failure.getDescription());
-        if (step == null) {
+        Execution execution = testCases.get(failure.getDescription());
+        if (execution == null) {
             return;
         }
-        step.setFailure(failure);
-        step.setStatus(Status.FAILED);
+        execution.setFailure(failure);
+        execution.setStatus(Status.FAILED);
     }
 
     public void testIgnored(Description description) throws Exception {
-        Execution step = new Execution(description, running.peek());
-        TestResult testResult = ReportHelper.createTestResult(step);
+        Execution execution = new Execution(description, testSuites.get(description.getTestClass().getName()));
+        TestResult testResult = ReportHelper.createTestResult(execution);
         testResult.setStatus(Status.SKIPPED);
         reportLifecycle.stopTestCase(testResult);
     }

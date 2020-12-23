@@ -21,18 +21,18 @@ public final class ReportHelper {
         return metadata;
     }
 
-    public static TestResult createTestResult(Execution step) {
+    public static TestResult createTestResult(Execution execution) {
         String uuid = GeneratorHelper.generateUniqueValue();
 
         TestResult testResult = new TestResult();
-        testResult.setStatus(step.getStatus());
+        testResult.setStatus(execution.getStatus());
         testResult.setUuid(uuid);
-        testResult.setName(step.getMethodName());
-        testResult.setSuiteName(step.getTestsuite().getClassName());
-        testResult.setParentUuid(step.getTestsuite().getTestSuiteUUID());
+        testResult.setName(execution.getMethodName());
+        testResult.setSuiteName(execution.getClassName());
+        testResult.setParentUuid(execution.getParent().getUuid());
 
-        if (step.getStatus() != Status.PASSED && step.getStatus() != Status.SKIPPED) {
-            Failure failure = step.getFailure();
+        if (execution.getStatus() != Status.PASSED && execution.getStatus() != Status.SKIPPED) {
+            Failure failure = execution.getFailure();
             if (failure != null) {
                 Throwable throwable = failure.getException();
                 testResult.setErrorMessage(getErrorMessage(throwable));
@@ -41,9 +41,9 @@ public final class ReportHelper {
         }
         testResult.setParameters(null);
 
-        testResult.setStart(step.getStart());
-        testResult.setStop(step.getEnd());
-        testResult.setDuration(step.getDuration());
+        testResult.setStart(execution.getStart());
+        testResult.setStop(execution.getEnd());
+        testResult.setDuration(execution.getDuration());
         return testResult;
     }
 
