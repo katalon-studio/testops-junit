@@ -4,8 +4,8 @@ import com.katalon.testops.commons.helper.GeneratorHelper;
 import com.katalon.testops.commons.model.Metadata;
 import com.katalon.testops.commons.model.Status;
 import com.katalon.testops.commons.model.TestResult;
-import com.katalon.testops.junit.reporter.ReportListener;
 import com.katalon.testops.junit.reporter.Execution;
+import com.katalon.testops.junit.reporter.ReportListener;
 import org.junit.runner.notification.Failure;
 
 import java.util.Objects;
@@ -44,11 +44,7 @@ public final class ReportHelper {
                 testResult.setStackTrace(getStackTraceAsString(throwable));
             }
         }
-        testResult.setParameters(null);
 
-        testResult.setStart(execution.getStart());
-        testResult.setStop(execution.getEnd());
-        testResult.setDuration(execution.getDuration());
         return testResult;
     }
 

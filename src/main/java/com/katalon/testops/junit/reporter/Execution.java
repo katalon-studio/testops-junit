@@ -6,27 +6,19 @@ import org.junit.runner.notification.Failure;
 
 public class Execution {
     private Description description;
-    private Status status;
-    private long start;
-    private long end;
+    private Status status = Status.INCOMPLETE;
     private String uuid;
     private Failure failure;
     private Execution parent;
 
     public Execution(Description description, Execution testsuite) {
         this.description = description;
-        this.start = System.currentTimeMillis();
-        this.end = -1;
-        this.status = Status.INCOMPLETE;
         this.parent = testsuite;
     }
 
     public Execution(Description description, String uuid) {
         this.description = description;
         this.uuid = uuid;
-        this.start = System.currentTimeMillis();
-        this.end = -1;
-        this.status = Status.INCOMPLETE;
     }
 
     public String getMethodName() {
@@ -37,20 +29,20 @@ public class Execution {
         return description.getTestClass().getName();
     }
 
-    public void setParent(Execution parent) {
-        this.parent = parent;
-    }
-
     public Execution getParent() {
         return this.parent;
     }
 
-    public void setFailure(Failure failure) {
-        this.failure = failure;
+    public void setParent(Execution parent) {
+        this.parent = parent;
     }
 
     public Failure getFailure() {
         return this.failure;
+    }
+
+    public void setFailure(Failure failure) {
+        this.failure = failure;
     }
 
     public String getUuid() {
@@ -78,26 +70,6 @@ public class Execution {
 
     public void setStatus(Status status) {
         this.status = status;
-    }
-
-    public long getStart() {
-        return start;
-    }
-
-    public void setStart(long start) {
-        this.start = start;
-    }
-
-    public long getEnd() {
-        return end;
-    }
-
-    public void setEnd(long end) {
-        this.end = end;
-    }
-
-    public long getDuration() {
-        return this.end > 0 ? (this.end - this.start) : 0;
     }
 
 }

@@ -55,6 +55,7 @@ public class TestRunManager {
     public void testStarted(Description description) {
         logger.info("testStarted: " + description.getMethodName());
         testCases.putIfAbsent(description, new Execution(description, getTestSuite(description).orElse(null)));
+        reportLifecycle.startTestCase();
     }
 
     public void testFailure(Failure failure) {
@@ -79,7 +80,6 @@ public class TestRunManager {
                     testCases.remove(description);
                     Status status = execution.getStatus() == Status.INCOMPLETE ? Status.PASSED : Status.FAILED;
                     execution.setStatus(status);
-                    execution.setEnd(System.currentTimeMillis());
                     stopTestCase(execution);
                 });
     }
