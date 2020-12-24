@@ -10,21 +10,21 @@ import org.junit.runner.Description;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 public class TestRunManager {
 
     private static final String NULL = "null";
 
     ReportLifecycle reportLifecycle;
-    Map<String, Execution> testSuites;
-    Map<Description, Execution> testCases;
+    ConcurrentMap<String, Execution> testSuites;
+    ConcurrentMap<Description, Execution> testCases;
 
     public TestRunManager() {
         reportLifecycle = new ReportLifecycle();
-        testSuites = new HashMap<>();
-        testCases = new HashMap<>();
+        testSuites = new ConcurrentHashMap<>();
+        testCases = new ConcurrentHashMap<>();
     }
 
     public void testRunStarted(Description description) throws Exception {
@@ -50,7 +50,7 @@ public class TestRunManager {
         }
         System.out.println("testSuiteStarted: " + description.getClassName());
         String uuid = GeneratorHelper.generateUniqueValue();
-        testSuites.put(description.getClassName(), new Execution(description, uuid));
+        testSuites.putIfAbsent(description.getClassName(), new Execution(description, uuid));
         TestSuite testSuite = new TestSuite();
         testSuite.setName(description.getClassName());
         reportLifecycle.startSuite(testSuite, uuid);
@@ -61,7 +61,7 @@ public class TestRunManager {
             return;
         }
         System.out.println("testSuiteFinished: " + description.getClassName());
-        Execution execution = testSuites.get(description.getClassName());
+        Execution execution = testSuites.getOrDefault(description.getClassName(), null);
         String uuid = null;
         if (execution != null) {
             execution.setEnd(System.currentTimeMillis());
@@ -76,11 +76,11 @@ public class TestRunManager {
 
     public void testStarted(Description description) throws Exception {
         System.out.println("testStarted: " + description.getMethodName());
-        testCases.put(description, new Execution(description, testSuites.get(description.getTestClass().getName())));
+        testCases.putIfAbsent(description, new Execution(description, testSuites.getOrDefault(description.getTestClass().getName(), null)));
     }
 
     public void testFinished(Description description) throws Exception {
-        Execution execution = testCases.get(description);
+        Execution execution = testCases.getOrDefault(description, null);
         testCases.remove(description);
         if (execution == null) {
             return;
@@ -93,7 +93,7 @@ public class TestRunManager {
     }
 
     public void testFailure(Failure failure) throws Exception {
-        Execution execution = testCases.get(failure.getDescription());
+        Execution execution = testCases.getOrDefault(failure.getDescription(), null);
         if (execution == null) {
             return;
         }
@@ -102,7 +102,7 @@ public class TestRunManager {
     }
 
     public void testAssumptionFailure(Failure failure) {
-        Execution execution = testCases.get(failure.getDescription());
+        Execution execution = testCases.getOrDefault(failure.getDescription(), null);
         if (execution == null) {
             return;
         }
@@ -111,7 +111,7 @@ public class TestRunManager {
     }
 
     public void testIgnored(Description description) throws Exception {
-        Execution execution = new Execution(description, testSuites.get(description.getTestClass().getName()));
+        Execution execution = new Execution(description, testSuites.getOrDefault(description.getTestClass().getName(), null));
         TestResult testResult = ReportHelper.createTestResult(execution);
         testResult.setStatus(Status.SKIPPED);
         reportLifecycle.stopTestCase(testResult);

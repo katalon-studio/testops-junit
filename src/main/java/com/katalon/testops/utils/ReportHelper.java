@@ -8,6 +8,8 @@ import com.katalon.testops.junit.reporter.ReportListener;
 import com.katalon.testops.junit.reporter.Execution;
 import org.junit.runner.notification.Failure;
 
+import java.util.Objects;
+
 import static com.katalon.testops.commons.helper.StringHelper.getErrorMessage;
 import static com.katalon.testops.commons.helper.StringHelper.getStackTraceAsString;
 
@@ -22,6 +24,9 @@ public final class ReportHelper {
     }
 
     public static TestResult createTestResult(Execution execution) {
+        if (Objects.isNull(execution.getParent())) {
+            throw new RuntimeException("TestSuite not found");
+        }
         String uuid = GeneratorHelper.generateUniqueValue();
 
         TestResult testResult = new TestResult();
