@@ -1,4 +1,4 @@
-package com.katalon.testops.utils;
+package com.katalon.testops.junit.helper;
 
 import com.katalon.testops.commons.helper.GeneratorHelper;
 import com.katalon.testops.commons.model.Metadata;

@@ -5,7 +5,7 @@ import com.katalon.testops.commons.helper.GeneratorHelper;
 import com.katalon.testops.commons.model.Status;
 import com.katalon.testops.commons.model.TestResult;
 import com.katalon.testops.commons.model.TestSuite;
-import com.katalon.testops.utils.ReportHelper;
+import com.katalon.testops.junit.helper.ReportHelper;
 import org.junit.runner.Description;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
