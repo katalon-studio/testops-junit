@@ -7,9 +7,53 @@
   <groupId>com.katalon</groupId>
   <artifactId>testops-junit4</artifactId>
   <version>1.0.1</version>
+  <url>https://github.com/katalon-studio/testops-junit4</url>
+  <description>Katalon TestOps SDK</description>
 
-  <name>Katalon TestOps SDK</name>
-  <url>http://www.katalon.com</url>
+  <organization>
+    <name>Katalon, LLC.</name>
+    <url>https://www.katalon.com</url>
+  </organization>
+
+  <licenses>
+    <license>
+      <name>License Agreement for Katalon Automation Framework</name>
+      <url>https://github.com/katalon-studio/utils/blob/master/LICENSE</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <developers>
+    <developer>
+      <name>Katalon Team</name>
+      <email>info@katalon.com</email>
+      <organization>Katalon, LLC.</organization>
+      <organizationUrl>https://www.katalon.com</organizationUrl>
+    </developer>
+  </developers>
+
+  <scm>
+    <connection>scm:git:git://github.com:katalon-studio/testops-junit4.git</connection>
+    <developerConnection>scm:git:git@github.com:katalon-studio/testops-junit4.git</developerConnection>
+    <url>https://github.com/katalon-studio/testops-junit4</url>
+    <tag>HEAD</tag>
+  </scm>
+
+  <issueManagement>
+    <system>github</system>
+    <url>https://github.com/katalon-studio/testops-junit4/issues</url>
+  </issueManagement>
+
+  <distributionManagement>
+    <snapshotRepository>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+    </snapshotRepository>
+    <repository>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+    </repository>
+  </distributionManagement>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -32,6 +76,17 @@
       <version>${testops-commons-version}</version>
     </dependency>
   </dependencies>
+
+  <repositories>
+    <repository>
+      <id>oss-sonatype</id>
+      <name>oss-sonatype</name>
+      <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
 
   <build>
     <pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
