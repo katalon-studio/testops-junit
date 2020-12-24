@@ -24,9 +24,6 @@ public final class ReportHelper {
     }
 
     public static TestResult createTestResult(Execution execution) {
-        if (Objects.isNull(execution.getParent())) {
-            throw new RuntimeException("TestSuite not found");
-        }
         String uuid = GeneratorHelper.generateUniqueValue();
 
         TestResult testResult = new TestResult();
@@ -34,14 +31,18 @@ public final class ReportHelper {
         testResult.setUuid(uuid);
         testResult.setName(execution.getMethodName());
         testResult.setSuiteName(execution.getClassName());
-        testResult.setParentUuid(execution.getParent().getUuid());
+        if (Objects.nonNull(execution.getParent())) {
+            testResult.setParentUuid(execution.getParent().getUuid());
+        }
 
-        if (execution.getStatus() != Status.PASSED && execution.getStatus() != Status.SKIPPED) {
+        if (execution.getStatus() != Status.PASSED) {
             Failure failure = execution.getFailure();
             if (failure != null) {
                 Throwable throwable = failure.getException();
                 testResult.setErrorMessage(getErrorMessage(throwable));
                 testResult.setStackTrace(getStackTraceAsString(throwable));
+            } else if (execution.getStatus() == Status.SKIPPED) {
+                testResult.setErrorMessage(execution.getIgnoreMessage());
             }
         }
 

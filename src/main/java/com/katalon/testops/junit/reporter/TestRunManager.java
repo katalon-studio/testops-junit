@@ -7,11 +7,13 @@ import com.katalon.testops.commons.model.TestResult;
 import com.katalon.testops.commons.model.TestSuite;
 import com.katalon.testops.junit.helper.LogHelper;
 import com.katalon.testops.junit.helper.ReportHelper;
+import org.junit.Ignore;
 import org.junit.runner.Description;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
 import org.slf4j.Logger;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -84,9 +86,10 @@ public class TestRunManager {
                 });
     }
 
-    public void testIgnored(Description description) throws Exception {
+    public void testIgnored(Description description) {
         Execution execution = new Execution(description, getTestSuite(description).orElse(null));
         execution.setStatus(Status.SKIPPED);
+        execution.setIgnoreMessage(getTestIgnoreMessage(description));
         stopTestCase(execution);
     }
 
@@ -113,7 +116,7 @@ public class TestRunManager {
         reportLifecycle.writeTestResultsReport();
         reportLifecycle.writeTestSuitesReport();
         reportLifecycle.writeExecutionReport();
-//        reportLifecycle.upload();
+        reportLifecycle.upload();
         cleanUp();
     }
 
@@ -121,7 +124,6 @@ public class TestRunManager {
         reportLifecycle.reset();
         testSuites.clear();
         testCases.clear();
-        ;
     }
 
     private Optional<Execution> getTestSuite(Description description) {
@@ -136,4 +138,13 @@ public class TestRunManager {
         TestResult testResult = ReportHelper.createTestResult(execution);
         reportLifecycle.stopTestCase(testResult);
     }
+
+    private String getTestIgnoreMessage(Description description) {
+        if (Objects.isNull(description)) {
+            return "";
+        }
+        Ignore ignore = description.getAnnotation(Ignore.class);
+        return Objects.nonNull(ignore) ? ignore.value() : "";
+    }
+
 }

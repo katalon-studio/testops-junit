@@ -10,6 +10,7 @@ public class Execution {
     private String uuid;
     private Failure failure;
     private Execution parent;
+    private String ignoreMessage;
 
     public Execution(Description description, Execution testsuite) {
         this.description = description;
@@ -50,6 +51,14 @@ public class Execution {
             throw new UnsupportedOperationException("Not a TestSuite step");
         }
         return uuid;
+    }
+
+    public String getIgnoreMessage() {
+        return ignoreMessage;
+    }
+
+    public void setIgnoreMessage(String ignoreMessage) {
+        this.ignoreMessage = ignoreMessage;
     }
 
     public boolean isTestSuite() {
