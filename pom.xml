@@ -6,7 +6,8 @@
 
   <groupId>com.katalon</groupId>
   <artifactId>testops-junit4</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <name>TestOps Junit</name>
+  <version>1.0.0</version>
   <url>https://github.com/katalon-studio/testops-junit4</url>
   <description>Katalon TestOps SDK</description>
 
@@ -69,7 +70,7 @@
     <nexus-staging-maven-plugin.version>1.6.8</nexus-staging-maven-plugin.version>
 
     <junit-version>4.13.1</junit-version>
-    <testops-commons-version>0.0.1-SNAPSHOT</testops-commons-version>
+    <testops-commons-version>1.0.0</testops-commons-version>
   </properties>
 
   <dependencies>
@@ -86,16 +87,16 @@
     </dependency>
   </dependencies>
 
-  <repositories>
-    <repository>
-      <id>oss-sonatype</id>
-      <name>oss-sonatype</name>
-      <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </repository>
-  </repositories>
+<!--  <repositories>-->
+<!--    <repository>-->
+<!--      <id>oss-sonatype</id>-->
+<!--      <name>oss-sonatype</name>-->
+<!--      <url>https://oss.sonatype.org/content/repositories/snapshots/</url>-->
+<!--      <snapshots>-->
+<!--        <enabled>true</enabled>-->
+<!--      </snapshots>-->
+<!--    </repository>-->
+<!--  </repositories>-->
 
   <build>
     <pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
