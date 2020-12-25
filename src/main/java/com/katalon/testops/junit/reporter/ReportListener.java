@@ -15,9 +15,7 @@ public class ReportListener extends RunListener {
 
     public ReportListener() {
         super();
-        tryCatch(() -> {
-            testRunManager = new TestRunManager();
-        });
+        testRunManager = new TestRunManager();
     }
 
     @Override
