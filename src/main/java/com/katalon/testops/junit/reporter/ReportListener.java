@@ -43,7 +43,7 @@ public class ReportListener extends RunListener {
         try {
             testRunManager.testSuiteStarted(description);
         } catch (Exception e) {
-            logger.error(getErrorMessage(getStepName("testSuiteStarted", description)), e);
+            logger.error(getErrorMessage("testSuiteStarted"), e);
         }
     }
 
@@ -52,7 +52,7 @@ public class ReportListener extends RunListener {
         try {
             testRunManager.testSuiteFinished(description);
         } catch (Exception e) {
-            logger.error(getErrorMessage(getStepName("testSuiteFinished", description)), e);
+            logger.error(getErrorMessage("testSuiteFinished"), e);
         }
     }
 
@@ -61,7 +61,7 @@ public class ReportListener extends RunListener {
         try {
             testRunManager.testStarted(description);
         } catch (Exception e) {
-            logger.error(getErrorMessage(getStepName("testStarted", description)), e);
+            logger.error(getErrorMessage("testStarted"), e);
         }
     }
 
@@ -70,7 +70,7 @@ public class ReportListener extends RunListener {
         try {
             testRunManager.testFinished(description);
         } catch (Exception e) {
-            logger.error(getErrorMessage(getStepName("testFinished", description)), e);
+            logger.error(getErrorMessage("testFinished"), e);
         }
     }
 
@@ -79,7 +79,7 @@ public class ReportListener extends RunListener {
         try {
             testRunManager.testFailure(failure);
         } catch (Exception e) {
-            logger.error(getErrorMessage(getStepName("testFailure", failure.getDescription())), e);
+            logger.error(getErrorMessage("testFailure"), e);
         }
     }
 
@@ -88,7 +88,7 @@ public class ReportListener extends RunListener {
         try {
             testRunManager.testAssumptionFailure(failure);
         } catch (Exception e) {
-            logger.error(getErrorMessage(getStepName("testAssumptionFailure", failure.getDescription())), e);
+            logger.error(getErrorMessage("testAssumptionFailure"), e);
         }
     }
 
@@ -97,20 +97,12 @@ public class ReportListener extends RunListener {
         try {
             testRunManager.testIgnored(description);
         } catch (Exception e) {
-            logger.error(getErrorMessage(getStepName("testIgnored", description)), e);
+            logger.error(getErrorMessage("testIgnored"), e);
         }
     }
 
     private String getErrorMessage(String step) {
         return String.format(TESTOPS_GENERAL_ERROR, step);
-    }
-
-    private String getStepName(String name, Description description) {
-        String stepName = description.getClassName();
-        if (description.isTest()) {
-            stepName += "." + description.getMethodName();
-        }
-        return name + ": " + stepName;
     }
 
 }
