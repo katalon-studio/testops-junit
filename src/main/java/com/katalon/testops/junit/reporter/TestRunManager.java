@@ -99,15 +99,11 @@ public class TestRunManager {
         }
         logger.info("testSuiteFinished: " + description.getClassName());
         ExecutionTestSuite executionTestSuite = testSuites.get(description.getClassName());
-        String uuid = null;
         if (executionTestSuite != null) {
-            uuid = executionTestSuite.getUuid();
-        }
-        if (uuid == null) {
-            uuid = GeneratorHelper.generateUniqueValue();
+            String uuid = executionTestSuite.getUuid();
+            reportLifecycle.stopTestSuite(uuid);
         }
         testSuites.remove(description.getClassName());
-        reportLifecycle.stopTestSuite(uuid);
     }
 
     public void testRunFinished(Result result) {
