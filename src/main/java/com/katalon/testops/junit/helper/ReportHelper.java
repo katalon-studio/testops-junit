@@ -4,7 +4,7 @@ import com.katalon.testops.commons.helper.GeneratorHelper;
 import com.katalon.testops.commons.model.Metadata;
 import com.katalon.testops.commons.model.Status;
 import com.katalon.testops.commons.model.TestResult;
-import com.katalon.testops.junit.reporter.Execution;
+import com.katalon.testops.junit.reporter.ExecutionTestResult;
 import com.katalon.testops.junit.reporter.ReportListener;
 import org.junit.runner.notification.Failure;
 
@@ -23,26 +23,26 @@ public final class ReportHelper {
         return metadata;
     }
 
-    public static TestResult createTestResult(Execution execution) {
+    public static TestResult createTestResult(ExecutionTestResult executionTestResult) {
         String uuid = GeneratorHelper.generateUniqueValue();
 
         TestResult testResult = new TestResult();
-        testResult.setStatus(execution.getStatus());
+        testResult.setStatus(executionTestResult.getStatus());
         testResult.setUuid(uuid);
-        testResult.setName(execution.getMethodName());
-        testResult.setSuiteName(execution.getClassName());
-        if (Objects.nonNull(execution.getParent())) {
-            testResult.setParentUuid(execution.getParent().getUuid());
+        testResult.setName(executionTestResult.getMethodName());
+        testResult.setSuiteName(executionTestResult.getClassName());
+        if (Objects.nonNull(executionTestResult.getParentUuid())) {
+            testResult.setParentUuid(executionTestResult.getParentUuid());
         }
 
-        if (execution.getStatus() != Status.PASSED) {
-            Failure failure = execution.getFailure();
+        if (executionTestResult.getStatus() != Status.PASSED) {
+            Failure failure = executionTestResult.getFailure();
             if (failure != null) {
                 Throwable throwable = failure.getException();
                 testResult.setErrorMessage(getErrorMessage(throwable));
                 testResult.setStackTrace(getStackTraceAsString(throwable));
-            } else if (execution.getStatus() == Status.SKIPPED) {
-                testResult.setErrorMessage(execution.getIgnoreMessage());
+            } else if (executionTestResult.getStatus() == Status.SKIPPED) {
+                testResult.setErrorMessage(executionTestResult.getIgnoreMessage());
             }
         }
 
