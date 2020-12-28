@@ -26,9 +26,9 @@ public class TestRunManager {
 
     private final ReportLifecycle reportLifecycle;
 
-    private final ConcurrentMap<String, Execution> testSuites;
+    private final ConcurrentMap<String, ExecutionTestSuite> testSuites;
 
-    private final ConcurrentMap<Description, Execution> testCases;
+    private final ConcurrentMap<Description, ExecutionTestResult> testCases;
 
     public TestRunManager() {
         reportLifecycle = new ReportLifecycle();
@@ -48,7 +48,7 @@ public class TestRunManager {
         }
         logger.info("testSuiteStarted: " + description.getClassName());
         String uuid = GeneratorHelper.generateUniqueValue();
-        testSuites.putIfAbsent(description.getClassName(), new Execution(description, uuid));
+        testSuites.putIfAbsent(description.getClassName(), new ExecutionTestSuite(uuid));
         TestSuite testSuite = new TestSuite();
         testSuite.setName(description.getClassName());
         reportLifecycle.startSuite(testSuite, uuid);
@@ -56,41 +56,41 @@ public class TestRunManager {
 
     public void testStarted(Description description) {
         logger.info("testStarted: " + description.getMethodName());
-        testCases.putIfAbsent(description, new Execution(description, getTestSuite(description).orElse(null)));
+        testCases.putIfAbsent(description, new ExecutionTestResult(description, getTestSuite(description).orElse(null)));
         reportLifecycle.startTestCase();
     }
 
     public void testFailure(Failure failure) {
         getTestCase(failure.getDescription())
-                .ifPresent(execution -> {
-                    execution.setFailure(failure);
-                    execution.setStatus(Status.FAILED);
+                .ifPresent(executionTestResult -> {
+                    executionTestResult.setFailure(failure);
+                    executionTestResult.setStatus(Status.FAILED);
                 });
     }
 
     public void testAssumptionFailure(Failure failure) {
         getTestCase(failure.getDescription())
-                .ifPresent(execution -> {
-                    execution.setFailure(failure);
-                    execution.setStatus(Status.FAILED);
+                .ifPresent(executionTestResult -> {
+                    executionTestResult.setFailure(failure);
+                    executionTestResult.setStatus(Status.SKIPPED);
                 });
     }
 
     public void testFinished(Description description) {
         getTestCase(description)
-                .ifPresent(execution -> {
+                .ifPresent(executionTestResult -> {
                     testCases.remove(description);
-                    Status status = execution.getStatus() == Status.INCOMPLETE ? Status.PASSED : Status.FAILED;
-                    execution.setStatus(status);
-                    stopTestCase(execution);
+                    Status status = executionTestResult.getStatus() == Status.INCOMPLETE ? Status.PASSED : Status.FAILED;
+                    executionTestResult.setStatus(status);
+                    stopTestCase(executionTestResult);
                 });
     }
 
     public void testIgnored(Description description) {
-        Execution execution = new Execution(description, getTestSuite(description).orElse(null));
-        execution.setStatus(Status.SKIPPED);
-        execution.setIgnoreMessage(getTestIgnoreMessage(description));
-        stopTestCase(execution);
+        ExecutionTestResult executionTestResult = new ExecutionTestResult(description, getTestSuite(description).orElse(null));
+        executionTestResult.setStatus(Status.SKIPPED);
+        executionTestResult.setIgnoreMessage(getTestIgnoreMessage(description));
+        stopTestCase(executionTestResult);
     }
 
     public void testSuiteFinished(Description description) {
@@ -98,16 +98,12 @@ public class TestRunManager {
             return;
         }
         logger.info("testSuiteFinished: " + description.getClassName());
-        Execution execution = testSuites.getOrDefault(description.getClassName(), null);
-        String uuid = null;
-        if (execution != null) {
-            uuid = execution.getUuid();
-        }
-        if (uuid == null) {
-            uuid = GeneratorHelper.generateUniqueValue();
+        ExecutionTestSuite executionTestSuite = testSuites.get(description.getClassName());
+        if (executionTestSuite != null) {
+            String uuid = executionTestSuite.getUuid();
+            reportLifecycle.stopTestSuite(uuid);
         }
         testSuites.remove(description.getClassName());
-        reportLifecycle.stopTestSuite(uuid);
     }
 
     public void testRunFinished(Result result) {
@@ -126,16 +122,16 @@ public class TestRunManager {
         testCases.clear();
     }
 
-    private Optional<Execution> getTestSuite(Description description) {
+    private Optional<ExecutionTestSuite> getTestSuite(Description description) {
         return Optional.ofNullable(testSuites.get(description.getTestClass().getName()));
     }
 
-    private Optional<Execution> getTestCase(Description description) {
+    private Optional<ExecutionTestResult> getTestCase(Description description) {
         return Optional.ofNullable(testCases.get(description));
     }
 
-    private void stopTestCase(Execution execution) {
-        TestResult testResult = ReportHelper.createTestResult(execution);
+    private void stopTestCase(ExecutionTestResult executionTestResult) {
+        TestResult testResult = ReportHelper.createTestResult(executionTestResult);
         reportLifecycle.stopTestCase(testResult);
     }
 
