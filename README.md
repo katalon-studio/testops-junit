@@ -1,6 +1,6 @@
 # Katalon TestOps JUnit
 
-This is a JUnit Reporter for submitting test results to Katalon TestOps.
+This is the JUnit Reporter for submitting test results to Katalon TestOps.
 
 ## Usage
 
