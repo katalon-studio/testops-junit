@@ -78,4 +78,4 @@ mvn test
 
 ## Samples
 
-https://github.com/katalon-studio-samples/testops-testng-sample
+https://github.com/katalon-studio-samples/testops-junit4-sample
