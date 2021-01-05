@@ -22,6 +22,10 @@ public class ExecutionTestResult {
         this.parent = parent;
     }
 
+    public String getTestCaseName() {
+        return getClassName() + "." + getMethodName();
+    }
+
     public String getMethodName() {
         return description.getMethodName();
     }
