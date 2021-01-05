@@ -29,7 +29,7 @@ public final class ReportHelper {
         TestResult testResult = new TestResult();
         testResult.setStatus(executionTestResult.getStatus());
         testResult.setUuid(uuid);
-        testResult.setName(executionTestResult.getMethodName());
+        testResult.setName(executionTestResult.getTestCaseName());
         testResult.setSuiteName(executionTestResult.getClassName());
         if (Objects.nonNull(executionTestResult.getParentUuid())) {
             testResult.setParentUuid(executionTestResult.getParentUuid());
@@ -39,10 +39,9 @@ public final class ReportHelper {
             Failure failure = executionTestResult.getFailure();
             if (failure != null) {
                 Throwable throwable = failure.getException();
-                testResult.setErrorMessage(getErrorMessage(throwable));
-                testResult.setStackTrace(getStackTraceAsString(throwable));
+                testResult.addError(throwable);
             } else if (executionTestResult.getStatus() == Status.SKIPPED) {
-                testResult.setErrorMessage(executionTestResult.getIgnoreMessage());
+                testResult.addError(executionTestResult.getIgnoreMessage(), "");
             }
         }
 
