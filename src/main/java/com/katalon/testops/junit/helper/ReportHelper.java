@@ -39,10 +39,9 @@ public final class ReportHelper {
             Failure failure = executionTestResult.getFailure();
             if (failure != null) {
                 Throwable throwable = failure.getException();
-                testResult.setErrorMessage(getErrorMessage(throwable));
-                testResult.setStackTrace(getStackTraceAsString(throwable));
+                testResult.addError(throwable);
             } else if (executionTestResult.getStatus() == Status.SKIPPED) {
-                testResult.setErrorMessage(executionTestResult.getIgnoreMessage());
+                testResult.addError(executionTestResult.getIgnoreMessage(), "");
             }
         }
 
