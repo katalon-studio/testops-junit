@@ -64,7 +64,8 @@ public class TestRunManager {
         getTestCase(failure.getDescription())
                 .ifPresent(executionTestResult -> {
                     executionTestResult.setFailure(failure);
-                    executionTestResult.setStatus(Status.FAILED);
+                    Status status = (failure.getException() instanceof AssertionError) ? Status.FAILED : Status.ERROR;
+                    executionTestResult.setStatus(status);
                 });
     }
 
