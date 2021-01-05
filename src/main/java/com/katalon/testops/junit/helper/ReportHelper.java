@@ -29,7 +29,7 @@ public final class ReportHelper {
         TestResult testResult = new TestResult();
         testResult.setStatus(executionTestResult.getStatus());
         testResult.setUuid(uuid);
-        testResult.setName(executionTestResult.getMethodName());
+        testResult.setName(executionTestResult.getTestCaseName());
         testResult.setSuiteName(executionTestResult.getClassName());
         if (Objects.nonNull(executionTestResult.getParentUuid())) {
             testResult.setParentUuid(executionTestResult.getParentUuid());
