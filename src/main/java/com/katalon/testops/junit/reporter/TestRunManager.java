@@ -81,8 +81,9 @@ public class TestRunManager {
         getTestCase(description)
                 .ifPresent(executionTestResult -> {
                     testCases.remove(description);
-                    Status status = executionTestResult.getStatus() == Status.INCOMPLETE ? Status.PASSED : Status.FAILED;
-                    executionTestResult.setStatus(status);
+                    if (executionTestResult.getStatus() == Status.INCOMPLETE) {
+                        executionTestResult.setStatus(Status.PASSED);
+                    }
                     stopTestCase(executionTestResult);
                 });
     }
