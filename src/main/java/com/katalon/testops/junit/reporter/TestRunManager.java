@@ -61,23 +61,31 @@ public class TestRunManager {
     }
 
     public void testFailure(Failure failure) {
+        logger.info("testFailure: " + failure.getDescription().getMethodName());
         getTestCase(failure.getDescription())
                 .ifPresent(executionTestResult -> {
-                    executionTestResult.setFailure(failure);
-                    Status status = (failure.getException() instanceof AssertionError) ? Status.FAILED : Status.ERROR;
-                    executionTestResult.setStatus(status);
+                    if (failure.getException() instanceof AssertionError) {
+                        executionTestResult.addFailure(failure);
+                        executionTestResult.setStatus(Status.FAILED);
+                    } else {
+                        executionTestResult.addError(failure);
+                        executionTestResult.setStatus(Status.ERROR);
+                    }
+
                 });
     }
 
     public void testAssumptionFailure(Failure failure) {
+        logger.info("testAssumptionFailure: " + failure.getDescription().getMethodName());
         getTestCase(failure.getDescription())
                 .ifPresent(executionTestResult -> {
-                    executionTestResult.setFailure(failure);
+                    executionTestResult.addFailure(failure);
                     executionTestResult.setStatus(Status.SKIPPED);
                 });
     }
 
     public void testFinished(Description description) {
+        logger.info("testFinish: " + description.getMethodName());
         getTestCase(description)
                 .ifPresent(executionTestResult -> {
                     testCases.remove(description);
@@ -89,6 +97,7 @@ public class TestRunManager {
     }
 
     public void testIgnored(Description description) {
+        logger.info("testIgnore: " + description.getMethodName());
         ExecutionTestResult executionTestResult = new ExecutionTestResult(description, getTestSuite(description).orElse(null));
         executionTestResult.setStatus(Status.SKIPPED);
         executionTestResult.setIgnoreMessage(getTestIgnoreMessage(description));

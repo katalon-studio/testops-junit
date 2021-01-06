@@ -7,7 +7,7 @@
   <groupId>com.katalon</groupId>
   <artifactId>testops-junit4</artifactId>
   <name>TestOps Junit</name>
-  <version>1.1.0</version>
+  <version>1.1.2</version>
   <url>https://github.com/katalon-studio/testops-junit4</url>
   <description>Katalon TestOps SDK</description>
 
@@ -71,7 +71,7 @@
 
     <junit-version>4.13.1</junit-version>
     <sl4j-version>1.7.30</sl4j-version>
-    <testops-commons-version>1.1.0</testops-commons-version>
+    <testops-commons-version>1.1.2</testops-commons-version>
   </properties>
 
   <dependencies>
