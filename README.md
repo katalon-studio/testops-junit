@@ -14,7 +14,7 @@ Add the dependency to `pom.xml`:
 <dependency>
     <groupId>com.katalon</groupId>
     <artifactId>testops-junit4</artifactId>
-    <version>1.0.1</version>
+    <version>1.1.2</version>
 </dependency>
 ```
 
