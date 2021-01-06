@@ -5,6 +5,9 @@ import com.katalon.testops.commons.model.WithUuid;
 import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ExecutionTestResult {
 
     private final Description description;
@@ -13,7 +16,9 @@ public class ExecutionTestResult {
 
     private Status status = Status.INCOMPLETE;
 
-    private Failure failure;
+    private List<Failure> failures = new ArrayList<>();
+
+    private List<Failure> errors = new ArrayList<>();
 
     private String ignoreMessage;
 
@@ -49,12 +54,20 @@ public class ExecutionTestResult {
         this.status = status;
     }
 
-    public Failure getFailure() {
-        return failure;
+    public List<Failure> getFailures() {
+        return failures;
     }
 
-    public void setFailure(Failure failure) {
-        this.failure = failure;
+    public void setFailures(List<Failure> failures) {
+        this.failures = failures;
+    }
+
+    public List<Failure> getErrors() {
+        return errors;
+    }
+
+    public void setErrors(List<Failure> errors) {
+        this.errors = errors;
     }
 
     public String getIgnoreMessage() {
@@ -63,5 +76,13 @@ public class ExecutionTestResult {
 
     public void setIgnoreMessage(String ignoreMessage) {
         this.ignoreMessage = ignoreMessage;
+    }
+
+    public void addError(Failure error) {
+        errors.add(error);
+    }
+
+    public void addFailure(Failure failure) {
+        failures.add(failure);
     }
 }

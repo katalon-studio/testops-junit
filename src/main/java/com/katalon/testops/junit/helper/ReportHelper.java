@@ -6,12 +6,8 @@ import com.katalon.testops.commons.model.Status;
 import com.katalon.testops.commons.model.TestResult;
 import com.katalon.testops.junit.reporter.ExecutionTestResult;
 import com.katalon.testops.junit.reporter.ReportListener;
-import org.junit.runner.notification.Failure;
 
 import java.util.Objects;
-
-import static com.katalon.testops.commons.helper.StringHelper.getErrorMessage;
-import static com.katalon.testops.commons.helper.StringHelper.getStackTraceAsString;
 
 public final class ReportHelper {
 
@@ -36,13 +32,17 @@ public final class ReportHelper {
         }
 
         if (executionTestResult.getStatus() != Status.PASSED) {
-            Failure failure = executionTestResult.getFailure();
-            if (failure != null) {
+            if (executionTestResult.getStatus() == Status.SKIPPED) {
+                testResult.addFailure(executionTestResult.getIgnoreMessage(), "");
+            }
+            executionTestResult.getFailures().forEach(failure -> {
                 Throwable throwable = failure.getException();
                 testResult.addError(throwable);
-            } else if (executionTestResult.getStatus() == Status.SKIPPED) {
-                testResult.addError(executionTestResult.getIgnoreMessage(), "");
-            }
+            });
+            executionTestResult.getErrors().forEach(error -> {
+                Throwable throwable = error.getException();
+                testResult.addFailure(throwable);
+            });
         }
 
         return testResult;

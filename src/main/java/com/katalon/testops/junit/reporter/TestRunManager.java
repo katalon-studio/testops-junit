@@ -64,9 +64,14 @@ public class TestRunManager {
         logger.info("testFailure: " + failure.getDescription().getMethodName());
         getTestCase(failure.getDescription())
                 .ifPresent(executionTestResult -> {
-                    executionTestResult.setFailure(failure);
-                    Status status = (failure.getException() instanceof AssertionError) ? Status.FAILED : Status.ERROR;
-                    executionTestResult.setStatus(status);
+                    if (failure.getException() instanceof AssertionError) {
+                        executionTestResult.addFailure(failure);
+                        executionTestResult.setStatus(Status.FAILED);
+                    } else {
+                        executionTestResult.addError(failure);
+                        executionTestResult.setStatus(Status.ERROR);
+                    }
+
                 });
     }
 
@@ -74,7 +79,7 @@ public class TestRunManager {
         logger.info("testAssumptionFailure: " + failure.getDescription().getMethodName());
         getTestCase(failure.getDescription())
                 .ifPresent(executionTestResult -> {
-                    executionTestResult.setFailure(failure);
+                    executionTestResult.addFailure(failure);
                     executionTestResult.setStatus(Status.SKIPPED);
                 });
     }
