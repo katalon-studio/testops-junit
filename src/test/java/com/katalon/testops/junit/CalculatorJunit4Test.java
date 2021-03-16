@@ -1,5 +1,6 @@
 package com.katalon.testops.junit;
 
+import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -56,9 +57,19 @@ public class CalculatorJunit4Test {
         calculator.divide(365, 0);
     }
 
-    @Ignore(value = "okie")
+    @Ignore(value = "this test is ignored")
     @Test
-    public void divideByZeroIncomplete() {
+    public void divideByZeroSkipped() {
         calculator.divide(365, 0);
+    }
+
+    @Test
+    public void divideByZeroSkippedByAssumption() {
+        Assume.assumeTrue(false);
+    }
+
+    @Test(timeout = 1000)
+    public void divideByZeroTimeoutError() throws InterruptedException {
+        Thread.sleep(3000);
     }
 }
