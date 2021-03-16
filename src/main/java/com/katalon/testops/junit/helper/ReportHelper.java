@@ -11,6 +11,10 @@ import java.util.Objects;
 
 public final class ReportHelper {
 
+    private ReportHelper() {
+        throw new IllegalStateException("Utility class");
+    }
+
     public static Metadata createMetadata() {
         Metadata metadata = new Metadata();
         metadata.setFramework("junit4");
