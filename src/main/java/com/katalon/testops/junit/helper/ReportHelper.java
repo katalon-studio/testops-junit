@@ -32,16 +32,16 @@ public final class ReportHelper {
         }
 
         if (executionTestResult.getStatus() != Status.PASSED) {
-            if (executionTestResult.getStatus() == Status.SKIPPED) {
+            if (executionTestResult.getStatus() == Status.SKIPPED && executionTestResult.getIgnoreMessage() != null) {
                 testResult.addFailure(executionTestResult.getIgnoreMessage(), "");
             }
             executionTestResult.getFailures().forEach(failure -> {
                 Throwable throwable = failure.getException();
-                testResult.addError(throwable);
+                testResult.addFailure(throwable);
             });
             executionTestResult.getErrors().forEach(error -> {
                 Throwable throwable = error.getException();
-                testResult.addFailure(throwable);
+                testResult.addError(throwable);
             });
         }
 
