@@ -37,8 +37,6 @@ jobs:
 
       - name: Upload Version Maven Package In Github
         shell: bash
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           ls -la
           VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
