@@ -57,7 +57,7 @@ mvn test
 #### Via Java system properties
 
 ```
-mvn test -Dtestops.serverUrl=https://testops.katalon.io -Dtestops.api-key=<your API key> -Dtestops.project-id=<your project ID>
+mvn test -Dtestops.server-url=https://testops.katalon.io -Dtestops.api-key=<your API key> -Dtestops.project-id=<your project ID>
 ```
 
 #### Via properties file
